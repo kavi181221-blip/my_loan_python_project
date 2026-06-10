@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - Loan Management{% endblock %}
+
+{% block content %}
+<style>
+    .register-container {
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .register-card {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        width: 100%;
+        max-width: 600px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+
+    .step-indicator {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        position: relative;
+    }
+
+    .step {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #e5e7eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #6b7280;
+        transition: all 0.3s;
+    }
+
+    .step.active {
+        background: var(--primary);
+        color: white;
+    }
+
+    .step.completed {
+        background: var(--success);
+        color: white;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    @media (max-width: 640px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--dark);
+        font-weight: 500;
+    }
+
+    .form-group input, .form-group select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+        outline: none;
+        border-color: var(--primary);
+    }
+</style>
+
+<div class="register-container">
+    <div class="register-card">
+        <div class="auth-header" style="text-align: center; margin-bottom: 2rem;">
+            <h2>Create Account</h2>
+            <p>Join thousands of satisfied customers</p>
+        </div>
+
+        <div class="step-indicator">
+            <div class="step active">1</div>
+            <div class="step">2</div>
+            <div class="step">3</div>
+        </div>
+
+        <form method="POST" id="registerForm">
+            {% csrf_token %}
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" required id="pass1">
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" name="confirm_password" required id="pass2">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" name="phone" required placeholder="+91">
+                </div>
+                <div class="form-group">
+                    <label>Monthly Income</label>
+                    <input type="number" name="income" required placeholder="₹">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Employment Type</label>
+                <select name="employment" required>
+                    <option value="">Select...</option>
+                    <option value="Salaried">Salaried</option>
+                    <option value="Self-Employed">Self-Employed</option>
+                    <option value="Business">Business</option>
+                    <option value="Student">Student</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Address</label>
+                <input type="text" name="address" required placeholder="Full address">
+            </div>
+
+            <button type="submit" class="submit-btn" style="width: 100%; padding: 1rem; margin-top: 1rem;">
+                <i class="fas fa-user-plus"></i> Create Account
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 1.5rem;">
+            <p>Already have an account? <a href="{% url 'login' %}" style="color: var(--primary);">Login</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        const pass1 = document.getElementById('pass1').value;
+        const pass2 = document.getElementById('pass2').value;
+
+        if (pass1 !== pass2) {
+            e.preventDefault();
+            alert('Passwords do not match!');
+            return false;
+        }
+
+        if (pass1.length < 8) {
+            e.preventDefault();
+            alert('Password must be at least 8 characters long!');
+            return false;
+        }
+    });
+</script>
+{% endblock %}

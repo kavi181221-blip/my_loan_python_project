@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .hero {
+        background: linear-gradient(rgba(37, 99, 235, 0.9), rgba(124, 58, 237, 0.9));
+        color: white;
+        padding: 4rem 2rem;
+        text-align: center;
+        border-radius: 0 0 50px 50px;
+        margin-bottom: 3rem;
+    }
+
+    .hero h1 {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        animation: fadeInUp 1s;
+    }
+
+    .hero p {
+        font-size: 1.3rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+    }
+
+    .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin: 3rem 0;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 20px;
+        text-align: center;
+        transition: all 0.3s;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    }
+
+    .feature-icon {
+        font-size: 3rem;
+        color: var(--primary);
+        margin-bottom: 1rem;
+    }
+
+    .loan-types {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .loan-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+
+    .loan-card:hover {
+        transform: scale(1.05);
+    }
+
+    .loan-header {
+        background: var(--primary);
+        color: white;
+        padding: 1.5rem;
+        font-size: 1.3rem;
+        font-weight: bold;
+    }
+
+    .loan-body {
+        padding: 1.5rem;
+    }
+
+    .rate {
+        font-size: 2rem;
+        color: var(--success);
+        font-weight: bold;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .stats {
+        background: white;
+        padding: 3rem;
+        border-radius: 20px;
+        margin: 3rem 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        text-align: center;
+    }
+
+    .stat-item h3 {
+        font-size: 2.5rem;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+    }
+</style>
+
+<div class="hero">
+    <h1>Get Your Loan Approved in Minutes</h1>
+    <p>Fast, Secure & Digital Loan Processing Platform</p>
+</div>
+
+<div class="container">
+    {% if user.is_authenticated %}
+        <div style="background: white; padding: 2rem; border-radius: 16px; margin-bottom: 2rem; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+            <h2 style="color: var(--primary); margin-bottom: 1rem;">Welcome back, {{ user.first_name|default:user.username }}! 🎉</h2>
+            <p style="color: #6b7280; font-size: 1.1rem;">Ready to apply for a new loan or check your existing applications?</p>
+        </div>
+    {% endif %}
+
+    <div class="features">
+        <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+            <h3>Instant Approval</h3>
+            <p>Get your loan approved within minutes with our AI-powered system</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+            <h3>Secure Process</h3>
+            <p>Bank-grade security for all your personal and financial data</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-percentage"></i></div>
+            <h3>Low Interest</h3>
+            <p>Competitive interest rates starting from 8.5% per annum</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+            <h3>Easy Tracking</h3>
+            <p>Track your loan status and payments in real-time</p>
+        </div>
+    </div>
+
+    <h2 style="text-align: center; margin: 3rem 0; color: white; font-size: 2.5rem;">Our Loan Products</h2>
+
+    <div class="loan-types">
+        <div class="loan-card">
+            <div class="loan-header"><i class="fas fa-user"></i> Personal Loan</div>
+            <div class="loan-body">
+                <div class="rate">10.5%</div>
+                <p>Up to ₹10 Lakhs</p>
+                <ul style="list-style: none; margin-top: 1rem;">
+                    <li><i class="fas fa-check text-success"></i> No collateral</li>
+                    <li><i class="fas fa-check text-success"></i> Flexible tenure</li>
+                </ul>
+            </div>
+        </div>
+        <div class="loan-card">
+            <div class="loan-header" style="background: #059669;"><i class="fas fa-home"></i> Home Loan</div>
+            <div class="loan-body">
+                <div class="rate">8.5%</div>
+                <p>Up to ₹1 Crore</p>
+                <ul style="list-style: none; margin-top: 1rem;">
+                    <li><i class="fas fa-check text-success"></i> Long tenure</li>
+                    <li><i class="fas fa-check text-success"></i> Tax benefits</li>
+                </ul>
+            </div>
+        </div>
+        <div class="loan-card">
+            <div class="loan-header" style="background: #dc2626;"><i class="fas fa-car"></i> Car Loan</div>
+            <div class="loan-body">
+                <div class="rate">9.0%</div>
+                <p>Up to ₹20 Lakhs</p>
+                <ul style="list-style: none; margin-top: 1rem;">
+                    <li><i class="fas fa-check text-success"></i> Quick disbursal</li>
+                    <li><i class="fas fa-check text-success"></i> Minimal docs</li>
+                </ul>
+            </div>
+        </div>
+        <div class="loan-card">
+            <div class="loan-header" style="background: #7c3aed;"><i class="fas fa-graduation-cap"></i> Education Loan</div>
+            <div class="loan-body">
+                <div class="rate">8.0%</div>
+                <p>Up to ₹30 Lakhs</p>
+                <ul style="list-style: none; margin-top: 1rem;">
+                    <li><i class="fas fa-check text-success"></i> Moratorium period</li>
+                    <li><i class="fas fa-check text-success"></i> Covers all expenses</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat-item">
+            <h3>50K+</h3>
+            <p>Happy Customers</p>
+        </div>
+        <div class="stat-item">
+            <h3>₹500Cr+</h3>
+            <p>Loans Disbursed</p>
+        </div>
+        <div class="stat-item">
+            <h3>99%</h3>
+            <p>Approval Rate</p>
+        </div>
+        <div class="stat-item">
+            <h3>4.9</h3>
+            <p>App Rating</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

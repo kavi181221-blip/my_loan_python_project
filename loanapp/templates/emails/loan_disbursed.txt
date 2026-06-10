@@ -1,0 +1,37 @@
+Loan Funds Disbursed!
+
+Dear {{ user.first_name|default:user.username }},
+
+Great news! Your loan funds have been successfully disbursed to your account.
+
+Loan Details:
+- Loan Type: {{ loan.get_loan_type_display }}
+- Disbursed Amount: ₹{{ loan.amount }}
+- Tenure: {{ loan.tenure_months }} months
+- Interest Rate: {{ loan.interest_rate }}% per annum
+- Monthly EMI: ₹{{ loan.monthly_emi }}
+- Total Payable Amount: ₹{{ loan.total_payable }}
+- Purpose: {{ loan.purpose }}
+
+Disbursement Information:
+- Status: {{ loan.status }}
+- Disbursement Date: {{ loan.approved_date|date:"F j, Y" }}
+- First EMI Due: Next month
+- EMI Amount: ₹{{ loan.monthly_emi }} per month
+
+Important Reminders:
+- Payment Schedule: Your first EMI payment is due on the 1st of next month.
+- Payment Methods: You can make payments through your dashboard using various payment methods.
+- Late Fees: Please ensure timely payments to avoid late payment charges.
+- Customer Support: Contact us immediately if you don't receive the funds within 24 hours.
+
+You can now track all your payments and loan details through your dashboard.
+
+Thank you for choosing our Loan Management System. We wish you success with your financial goals!
+
+Best regards,
+Loan Management Team
+
+---
+This is an automated message. Please do not reply to this email.
+© 2024 Loan Management System. All rights reserved.

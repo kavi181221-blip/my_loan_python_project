@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Loan Application Approved</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; }
+        .loan-details { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10b981; }
+        .next-steps { background: #ecfdf5; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10b981; }
+        .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
+        .highlight { color: #10b981; font-weight: bold; }
+        .celebration { font-size: 2em; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="celebration">🎉</div>
+            <h1>Congratulations! Loan Approved</h1>
+        </div>
+        <div class="content">
+            <p>Dear {{ user.first_name|default:user.username }},</p>
+
+            <p><strong>Great news!</strong> Your loan application has been approved. We're excited to help you achieve your financial goals.</p>
+
+            <div class="loan-details">
+                <h3 style="margin-top: 0; color: #10b981;">Approved Loan Details:</h3>
+                <p><strong>Loan Type:</strong> {{ loan.get_loan_type_display }}</p>
+                <p><strong>Approved Amount:</strong> ₹{{ loan.amount }}</p>
+                <p><strong>Tenure:</strong> {{ loan.tenure_months }} months</p>
+                <p><strong>Interest Rate:</strong> {{ loan.interest_rate }}% per annum</p>
+                <p><strong>Monthly EMI:</strong> ₹{{ loan.monthly_emi }}</p>
+                <p><strong>Total Payable Amount:</strong> ₹{{ loan.total_payable }}</p>
+                <p><strong>Purpose:</strong> {{ loan.purpose }}</p>
+                <p><strong>Approval Date:</strong> {{ loan.approved_date|date:"F j, Y, g:i A" }}</p>
+            </div>
+
+            <div class="next-steps">
+                <h3 style="margin-top: 0; color: #10b981;">Next Steps:</h3>
+                <ol>
+                    <li><strong>Document Verification:</strong> Our team will contact you within 24 hours to verify your documents.</li>
+                    <li><strong>Loan Agreement:</strong> You'll receive a digital loan agreement to sign electronically.</li>
+                    <li><strong>Fund Disbursement:</strong> Once documents are verified, funds will be transferred to your account within 2-3 business days.</li>
+                    <li><strong>EMI Schedule:</strong> Your first EMI payment will be due on the disbursement date of the next month.</li>
+                </ol>
+            </div>
+
+            <p>You can now make payments and track your loan details through your dashboard.</p>
+
+            <p>If you have any questions about your approved loan, please contact our support team.</p>
+
+            <p>Thank you for choosing our Loan Management System!</p>
+
+            <p>Best regards,<br>
+            Loan Management Team</p>
+        </div>
+        <div class="footer">
+            <p>This is an automated message. Please do not reply to this email.</p>
+            <p>&copy; 2024 Loan Management System. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

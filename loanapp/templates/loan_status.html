@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}Loan Status - Loan Management{% endblock %}
+
+{% block content %}
+<style>
+    .timeline {
+        position: relative;
+        padding: 2rem 0;
+    }
+
+    .timeline-item {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        position: relative;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: 20px;
+        top: 40px;
+        bottom: -20px;
+        width: 2px;
+        background: #e5e7eb;
+    }
+
+    .timeline-item:last-child::before {
+        display: none;
+    }
+
+    .timeline-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        z-index: 1;
+    }
+
+    .timeline-content {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        flex: 1;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .badge-warning { background: #fef3c7; color: #92400e; }
+    .badge-success { background: #d1fae5; color: #065f46; }
+    .badge-danger { background: #fee2e2; color: #991b1b; }
+    .badge-info { background: #dbeafe; color: #1e40af; }
+</style>
+
+<div class="container">
+    <h2 style="color: white; margin-bottom: 2rem;">My Loan Applications</h2>
+
+    <div class="card">
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f9fafb;">
+                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #e5e7eb;">Loan ID</th>
+                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #e5e7eb;">Type</th>
+                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #e5e7eb;">Amount</th>
+                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #e5e7eb;">EMI</th>
+                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #e5e7eb;">Status</th>
+                        <th style="padding: 1rem; text-align: left; border-bottom: 2px solid #e5e7eb;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for loan in loans %}
+                    <tr>
+                        <td style="padding: 1rem; border-bottom: 1px solid #e5e7eb;">#{{ loan.id }}</td>
+                        <td style="padding: 1rem; border-bottom: 1px solid #e5e7eb;">
+                            <i class="fas fa-{% if loan.loan_type == 'Personal' %}user{% elif loan.loan_type == 'Home' %}home{% elif loan.loan_type == 'Car' %}car{% else %}graduation-cap{% endif %}" style="color: var(--primary); margin-right: 0.5rem;"></i>
+                            {{ loan.loan_type }}
+                        </td>
+                        <td style="padding: 1rem; border-bottom: 1px solid #e5e7eb;">₹{{ loan.amount }}</td>
+                        <td style="padding: 1rem; border-bottom: 1px solid #e5e7eb;">₹{{ loan.monthly_emi|default:"--" }}</td>
+                        <td style="padding: 1rem; border-bottom: 1px solid #e5e7eb;">
+                            {% if loan.status == 'Pending' %}
+                                <span class="badge badge-warning">Pending</span>
+                            {% elif loan.status == 'Approved' or loan.status == 'Disbursed' %}
+                                <span class="badge badge-success">{{ loan.status }}</span>
+                            {% elif loan.status == 'Rejected' %}
+                                <span class="badge badge-danger">Rejected</span>
+                            {% else %}
+                                <span class="badge badge-info">{{ loan.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td style="padding: 1rem; border-bottom: 1px solid #e5e7eb;">
+                            <a href="{% url 'loan_details' loan.id %}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Details</a>
+                            {% if loan.status == 'Disbursed' %}
+                            <a href="{% url 'make_payment' loan.id %}" class="btn btn-success" style="padding: 0.5rem 1rem; font-size: 0.9rem; margin-left: 0.5rem;">Pay EMI</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" style="padding: 3rem; text-align: center; color: #6b7280;">
+                            <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                            No loan applications found.<br>
+                            <a href="{% url 'apply_loan' %}" style="color: var(--primary);">Apply for your first loan</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

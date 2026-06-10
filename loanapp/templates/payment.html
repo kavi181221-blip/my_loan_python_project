@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block title %}Make Payment - Loan Management{% endblock %}
+
+{% block content %}
+<style>
+    .payment-container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .payment-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+
+    .payment-header {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .payment-header h3 {
+        margin-bottom: 0.5rem;
+    }
+
+    .amount-due {
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+
+    .payment-body {
+        padding: 2rem;
+    }
+
+    .payment-methods {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin: 2rem 0;
+    }
+
+    .method {
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 1rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .method:hover, .method.selected {
+        border-color: var(--primary);
+        background: #eff6ff;
+    }
+
+    .method i {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        display: block;
+        color: var(--primary);
+    }
+
+    .method-title {
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 1rem;
+    }
+
+    .pay-btn {
+        width: 100%;
+        padding: 1rem;
+        background: var(--success);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .pay-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+    }
+</style>
+
+<div class="container payment-container">
+    <div class="payment-card">
+        <div class="payment-header">
+            <h3>Monthly EMI Payment</h3>
+            <div class="amount-due">₹{{ loan.monthly_emi }}</div>
+            <p>Due Date: {{ next_due|default:"Next Month" }}</p>
+        </div>
+
+        <div class="payment-body">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="amount" value="{{ loan.monthly_emi }}">
+
+                <h4 style="margin-bottom: 1rem;">Select Payment Method</h4>
+                <div class="payment-methods">
+                    <div class="method" onclick="selectMethod(this, 'UPI')">
+                        <i class="fas fa-mobile-alt"></i>
+                        <div class="method-title">UPI</div>
+                    </div>
+                    <div class="method" onclick="selectMethod(this, 'Credit Card')">
+                        <i class="fas fa-credit-card"></i>
+                        <div class="method-title">Card</div>
+                    </div>
+                    <div class="method" onclick="selectMethod(this, 'Bank Transfer')">
+                        <i class="fas fa-university"></i>
+                        <div class="method-title">NetBanking</div>
+                    </div>
+                </div>
+                <input type="hidden" name="method" id="paymentMethod" required>
+
+                <div class="form-group">
+                    <label>Card/UPI ID/Account Number</label>
+                    <input type="text" placeholder="Enter payment details" required>
+                </div>
+
+                <button type="submit" class="pay-btn">
+                    <i class="fas fa-lock"></i> Pay Securely ₹{{ loan.monthly_emi }}
+                </button>
+
+                <div style="text-align: center; margin-top: 1rem; color: #6b7280; font-size: 0.9rem;">
+                    <i class="fas fa-shield-alt"></i> 256-bit SSL Secured
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function selectMethod(element, method) {
+        document.querySelectorAll('.method').forEach(m => m.classList.remove('selected'));
+        element.classList.add('selected');
+        document.getElementById('paymentMethod').value = method;
+    }
+</script>
+{% endblock %}

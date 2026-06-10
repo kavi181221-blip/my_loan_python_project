@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Loan Funds Disbursed</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; }
+        .loan-details { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6; }
+        .disbursement-info { background: #eff6ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6; }
+        .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
+        .highlight { color: #3b82f6; font-weight: bold; }
+        .celebration { font-size: 2em; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="celebration">💰</div>
+            <h1>Loan Funds Disbursed!</h1>
+        </div>
+        <div class="content">
+            <p>Dear {{ user.first_name|default:user.username }},</p>
+
+            <p><strong>Great news!</strong> Your loan funds have been successfully disbursed to your account.</p>
+
+            <div class="loan-details">
+                <h3 style="margin-top: 0; color: #3b82f6;">Loan Details:</h3>
+                <p><strong>Loan Type:</strong> {{ loan.get_loan_type_display }}</p>
+                <p><strong>Disbursed Amount:</strong> ₹{{ loan.amount }}</p>
+                <p><strong>Tenure:</strong> {{ loan.tenure_months }} months</p>
+                <p><strong>Interest Rate:</strong> {{ loan.interest_rate }}% per annum</p>
+                <p><strong>Monthly EMI:</strong> ₹{{ loan.monthly_emi }}</p>
+                <p><strong>Total Payable Amount:</strong> ₹{{ loan.total_payable }}</p>
+                <p><strong>Purpose:</strong> {{ loan.purpose }}</p>
+            </div>
+
+            <div class="disbursement-info">
+                <h3 style="margin-top: 0; color: #3b82f6;">Disbursement Information:</h3>
+                <p><strong>Status:</strong> <span class="highlight">{{ loan.status }}</span></p>
+                <p><strong>Disbursement Date:</strong> {{ loan.approved_date|date:"F j, Y" }}</p>
+                <p><strong>First EMI Due:</strong> {{ loan.approved_date|date:"F"|add:" 1, Y" }} (next month)</p>
+                <p><strong>EMI Amount:</strong> ₹{{ loan.monthly_emi }} per month</p>
+            </div>
+
+            <h3 style="color: #3b82f6;">Important Reminders:</h3>
+            <ul>
+                <li><strong>Payment Schedule:</strong> Your first EMI payment is due on the 1st of next month.</li>
+                <li><strong>Payment Methods:</strong> You can make payments through your dashboard using various payment methods.</li>
+                <li><strong>Late Fees:</strong> Please ensure timely payments to avoid late payment charges.</li>
+                <li><strong>Customer Support:</strong> Contact us immediately if you don't receive the funds within 24 hours.</li>
+            </ul>
+
+            <p>You can now track all your payments and loan details through your dashboard.</p>
+
+            <p>Thank you for choosing our Loan Management System. We wish you success with your financial goals!</p>
+
+            <p>Best regards,<br>
+            Loan Management Team</p>
+        </div>
+        <div class="footer">
+            <p>This is an automated message. Please do not reply to this email.</p>
+            <p>&copy; 2024 Loan Management System. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
