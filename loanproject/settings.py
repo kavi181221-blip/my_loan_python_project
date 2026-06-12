@@ -47,18 +47,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'loanproject.wsgi.application'
 
-# MySQL Database Configuration
+# Use SQLite by default so the app can boot on Render without a MySQL driver.
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'loan_db',
-        'USER': 'root',
-        'PASSWORD': 'admin',
-        'HOST': 'localhost',
-        'PORT': '3306',
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
