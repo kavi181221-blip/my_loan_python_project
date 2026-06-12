@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Confirmation</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; }
+        .payment-details { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10b981; }
+        .loan-summary { background: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10b981; }
+        .footer { text-align: center; margin-top: 30px; color: #666; font-size: 12px; }
+        .highlight { color: #10b981; font-weight: bold; }
+        .success-icon { font-size: 2em; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="success-icon">✅</div>
+            <h1>Payment Successful!</h1>
+        </div>
+        <div class="content">
+            <p>Dear {{ user.first_name|default:user.username }},</p>
+
+            <p>Your payment has been successfully processed. Thank you for your timely payment!</p>
+
+            <div class="payment-details">
+                <h3 style="margin-top: 0; color: #10b981;">Recent Payment Details:</h3>
+                <p><strong>Amount Paid:</strong> ₹{{ payments.last.amount_paid }}</p>
+                <p><strong>Payment Method:</strong> {{ payments.last.get_payment_method_display }}</p>
+                <p><strong>Transaction ID:</strong> <span class="highlight">{{ payments.last.transaction_id }}</span></p>
+                <p><strong>Payment Date:</strong> {{ payments.last.payment_date|date:"F j, Y, g:i A" }}</p>
+                <p><strong>Status:</strong> <span class="highlight">{{ payments.last.get_status_display }}</span></p>
+            </div>
+
+            <div class="loan-summary">
+                <h3 style="margin-top: 0; color: #10b981;">Loan Summary:</h3>
+                <p><strong>Loan Type:</strong> {{ loan.get_loan_type_display }}</p>
+                <p><strong>Loan Amount:</strong> ₹{{ loan.amount }}</p>
+                <p><strong>Monthly EMI:</strong> ₹{{ loan.monthly_emi }}</p>
+                <p><strong>Next EMI Due:</strong> {{ payment.payment_date|date:"F"|add:" 1, Y" }}</p>
+            </div>
+
+            <h3 style="color: #10b981;">What's Next?</h3>
+            <ul>
+                <li><strong>Receipt:</strong> A digital receipt has been generated and is available in your dashboard.</li>
+                <li><strong>Loan Balance:</strong> Your loan balance has been updated automatically.</li>
+                <li><strong>Next Payment:</strong> Your next EMI payment is due on the 1st of next month.</li>
+                <li><strong>Payment History:</strong> You can view all your payments in the loan details section.</li>
+            </ul>
+
+            <p>If you have any questions about this payment or need assistance, please contact our support team.</p>
+
+            <p>Thank you for keeping your account current!</p>
+
+            <p>Best regards,<br>
+            Loan Management Team</p>
+        </div>
+        <div class="footer">
+            <p>This is an automated message. Please do not reply to this email.</p>
+            <p>&copy; 2024 Loan Management System. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

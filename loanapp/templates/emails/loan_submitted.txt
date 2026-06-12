@@ -1,0 +1,28 @@
+Loan Application Submitted
+
+Dear {{ user.first_name|default:user.username }},
+
+Thank you for submitting your loan application with our Loan Management System. We have received your application and it is currently under review.
+
+Application Details:
+- Loan Type: {{ loan.get_loan_type_display }}
+- Amount Requested: ₹{{ loan.amount }}
+- Tenure: {{ loan.tenure_months }} months
+- Interest Rate: {{ loan.interest_rate }}% per annum
+- Monthly EMI: ₹{{ loan.monthly_emi|default:"Calculating..." }}
+- Purpose: {{ loan.purpose }}
+- Application Date: {{ loan.approved_date|date:"F j, Y, g:i A" }}
+- Current Status: {{ loan.status }}
+
+Our team will review your application within 2-3 business days. You will receive an email notification once a decision is made.
+
+You can track your application status by logging into your dashboard at any time.
+
+If you have any questions, please don't hesitate to contact our support team.
+
+Best regards,
+Loan Management Team
+
+---
+This is an automated message. Please do not reply to this email.
+© 2024 Loan Management System. All rights reserved.

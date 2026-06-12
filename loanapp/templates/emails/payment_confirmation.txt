@@ -1,0 +1,35 @@
+Payment Successful!
+
+Dear {{ user.first_name|default:user.username }},
+
+Your payment has been successfully processed. Thank you for your timely payment!
+
+Recent Payment Details:
+- Amount Paid: ₹{{ payments.last.amount_paid }}
+- Payment Method: {{ payments.last.get_payment_method_display }}
+- Transaction ID: {{ payments.last.transaction_id }}
+- Payment Date: {{ payments.last.payment_date|date:"F j, Y, g:i A" }}
+- Status: {{ payments.last.get_status_display }}
+
+Loan Summary:
+- Loan Type: {{ loan.get_loan_type_display }}
+- Loan Amount: ₹{{ loan.amount }}
+- Monthly EMI: ₹{{ loan.monthly_emi }}
+- Next EMI Due: Next month
+
+What's Next?
+- Receipt: A digital receipt has been generated and is available in your dashboard.
+- Loan Balance: Your loan balance has been updated automatically.
+- Next Payment: Your next EMI payment is due on the 1st of next month.
+- Payment History: You can view all your payments in the loan details section.
+
+If you have any questions about this payment or need assistance, please contact our support team.
+
+Thank you for keeping your account current!
+
+Best regards,
+Loan Management Team
+
+---
+This is an automated message. Please do not reply to this email.
+© 2024 Loan Management System. All rights reserved.

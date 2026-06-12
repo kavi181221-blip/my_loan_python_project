@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+
+{% block title %}EMI Calculator - Loan Management{% endblock %}
+
+{% block content %}
+<style>
+    .calculator-container {
+        max-width: 900px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+    .calc-input {
+        background: white;
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .calc-result {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .input-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .input-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .slider-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .slider-container input[type="range"] {
+        flex: 1;
+        height: 6px;
+        border-radius: 3px;
+        background: #e5e7eb;
+        outline: none;
+    }
+
+    .value-box {
+        background: #f3f4f6;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        min-width: 100px;
+        text-align: center;
+        font-weight: 600;
+        color: var(--primary);
+    }
+
+    .result-item {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .result-item:last-child {
+        border-bottom: none;
+    }
+
+    .result-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        margin-bottom: 0.25rem;
+    }
+
+    .result-value {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+
+    .chart-container {
+        margin-top: 2rem;
+        height: 200px;
+        position: relative;
+    }
+
+    @media (max-width: 768px) {
+        .calculator-container {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="container">
+    <h2 style="color: white; text-align: center; margin-bottom: 2rem;">EMI Calculator</h2>
+
+    <div class="calculator-container">
+        <div class="calc-input">
+            <h3 style="margin-bottom: 1.5rem;">Loan Details</h3>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="input-group">
+                    <label>Loan Amount</label>
+                    <div class="slider-container">
+                        <input type="range" min="50000" max="5000000" value="500000" name="amount" id="amountSlider" oninput="calculate()">
+                        <div class="value-box">₹<span id="amountVal">5,00,000</span></div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Interest Rate (% per annum)</label>
+                    <div class="slider-container">
+                        <input type="range" min="8" max="20" step="0.5" value="10.5" name="rate" id="rateSlider" oninput="calculate()">
+                        <div class="value-box"><span id="rateVal">10.5</span>%</div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Loan Tenure (Years)</label>
+                    <div class="slider-container">
+                        <input type="range" min="1" max="30" value="5" name="tenure" id="tenureSlider" oninput="calculate()">
+                        <div class="value-box"><span id="tenureVal">5</span> Yr</div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                    <i class="fas fa-calculator"></i> Calculate
+                </button>
+            </form>
+        </div>
+
+        <div class="calc-result">
+            <h3 style="margin-bottom: 2rem;">Payment Summary</h3>
+
+            <div class="result-item">
+                <div class="result-label">Monthly EMI</div>
+                <div class="result-value">₹<span id="emiResult">{{ emi_result.emi|default:"0" }}</span></div>
+            </div>
+
+            <div class="result-item">
+                <div class="result-label">Total Interest Payable</div>
+                <div class="result-value" style="font-size: 1.5rem;">₹<span id="interestResult">{{ emi_result.interest|default:"0" }}</span></div>
+            </div>
+
+            <div class="result-item">
+                <div class="result-label">Total Payment</div>
+                <div class="result-value" style="font-size: 1.5rem;">₹<span id="totalResult">{{ emi_result.total|default:"0" }}</span></div>
+            </div>
+
+            <div style="margin-top: 2rem; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <small>
+                    <i class="fas fa-info-circle"></i>
+                    This is an approximate calculation. Actual values may vary based on bank policies.
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function calculate() {
+        const amount = parseFloat(document.getElementById('amountSlider').value);
+        const rate = parseFloat(document.getElementById('rateSlider').value);
+        const years = parseInt(document.getElementById('tenureSlider').value);
+        const months = years * 12;
+
+        document.getElementById('amountVal').textContent = amount.toLocaleString('en-IN');
+        document.getElementById('rateVal').textContent = rate;
+        document.getElementById('tenureVal').textContent = years;
+
+        const P = amount;
+        const R = rate / (12 * 100);
+        const N = months;
+
+        let emi = 0;
+        if (rate === 0) {
+            emi = P / N;
+        } else {
+            emi = (P * R * Math.pow(1 + R, N)) / (Math.pow(1 + R, N) - 1);
+        }
+
+        const total = emi * N;
+        const interest = total - P;
+
+        document.getElementById('emiResult').textContent = Math.round(emi).toLocaleString('en-IN');
+        document.getElementById('interestResult').textContent = Math.round(interest).toLocaleString('en-IN');
+        document.getElementById('totalResult').textContent = Math.round(total).toLocaleString('en-IN');
+    }
+
+    // Initial calculation
+    calculate();
+</script>
+{% endblock %}

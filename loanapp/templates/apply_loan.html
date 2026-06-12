@@ -1,0 +1,247 @@
+{% extends 'base.html' %}
+
+{% block title %}Apply Loan - Loan Management{% endblock %}
+
+{% block content %}
+<style>
+    .application-form {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 3rem;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+
+    .progress-bar {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 3rem;
+        position: relative;
+    }
+
+    .progress-bar::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #e5e7eb;
+        z-index: 0;
+    }
+
+    .progress-step {
+        width: 40px;
+        height: 40px;
+        background: white;
+        border: 2px solid #e5e7eb;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 1;
+        font-weight: bold;
+        color: #9ca3af;
+    }
+
+    .progress-step.active {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .loan-type-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .loan-type-card {
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .loan-type-card:hover, .loan-type-card.selected {
+        border-color: var(--primary);
+        background: #eff6ff;
+    }
+
+    .loan-type-card i {
+        font-size: 2rem;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .range-slider {
+        width: 100%;
+        margin: 1rem 0;
+    }
+
+    .range-value {
+        text-align: center;
+        font-size: 1.5rem;
+        color: var(--primary);
+        font-weight: bold;
+        margin-top: 0.5rem;
+    }
+
+    .emi-preview {
+        background: #f9fafb;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-top: 2rem;
+        border-left: 4px solid var(--primary);
+    }
+</style>
+
+<div class="container">
+    <div class="application-form">
+        <h2 style="text-align: center; margin-bottom: 0.5rem;">Loan Application</h2>
+        <p style="text-align: center; color: #6b7280; margin-bottom: 2rem;">Fill in the details to apply for your loan</p>
+
+        <div class="progress-bar">
+            <div class="progress-step active">1</div>
+            <div class="progress-step">2</div>
+            <div class="progress-step">3</div>
+            <div class="progress-step">4</div>
+            <div class="progress-step">5</div>
+        </div>
+
+        <form method="POST" id="loanForm">
+            {% csrf_token %}
+
+            <h3 style="margin-bottom: 1rem;">1. Select Loan Type</h3>
+            <div class="loan-type-grid">
+                <div class="loan-type-card" onclick="selectLoan('Personal', 10.5, this)">
+                    <i class="fas fa-user"></i>
+                    <div>Personal</div>
+                    <small>10.5% p.a.</small>
+                </div>
+                <div class="loan-type-card" onclick="selectLoan('Home', 8.5, this)">
+                    <i class="fas fa-home"></i>
+                    <div>Home</div>
+                    <small>8.5% p.a.</small>
+                </div>
+                <div class="loan-type-card" onclick="selectLoan('Car', 9.0, this)">
+                    <i class="fas fa-car"></i>
+                    <div>Car</div>
+                    <small>9.0% p.a.</small>
+                </div>
+                <div class="loan-type-card" onclick="selectLoan('Education', 8.0, this)">
+                    <i class="fas fa-graduation-cap"></i>
+                    <div>Education</div>
+                    <small>8.0% p.a.</small>
+                </div>
+            </div>
+            <input type="hidden" name="loan_type" id="loan_type" required>
+
+            <h3 style="margin: 2rem 0 1rem;">2. Loan Amount</h3>
+            <div class="form-group">
+                <label>Amount Needed (₹)</label>
+                <input type="range" min="50000" max="1000000" value="100000" class="range-slider" id="amountRange" oninput="updateAmount(this.value)">
+                <div class="range-value">₹<span id="amountDisplay">1,00,000</span></div>
+                <input type="hidden" name="amount" id="amount" value="100000">
+            </div>
+
+            <h3 style="margin: 2rem 0 1rem;">3. Tenure</h3>
+            <div class="form-group">
+                <label>Repayment Period (Months)</label>
+                <input type="range" min="6" max="60" value="12" class="range-slider" id="tenureRange" oninput="updateTenure(this.value)">
+                <div class="range-value"><span id="tenureDisplay">12</span> Months</div>
+                <input type="hidden" name="tenure" id="tenure" value="12">
+            </div>
+
+            <div class="emi-preview">
+                <h4 style="margin-bottom: 1rem;">Estimated EMI</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <small>Monthly EMI</small>
+                        <div style="font-size: 1.5rem; color: var(--primary); font-weight: bold;">₹<span id="emiAmount">0</span></div>
+                    </div>
+                    <div>
+                        <small>Total Interest Payable</small>
+                        <div style="font-size: 1.5rem; color: var(--warning); font-weight: bold;">₹<span id="interestAmount">0</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin: 2rem 0 1rem;">4. Contact Information</h3>
+            <div class="form-group">
+                <label for="email">Email Address *</label>
+                <input type="email" name="email" id="email" placeholder="Enter your email address" required style="width: 100%; padding: 1rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;">
+                <small style="color: #6b7280; display: block; margin-top: 0.5rem;">We'll send loan status updates and important notifications to this email</small>
+            </div>
+
+            <h3 style="margin: 2rem 0 1rem;">5. Purpose</h3>
+            <div class="form-group">
+                <textarea name="purpose" rows="3" placeholder="Briefly describe the purpose of this loan..." required style="width: 100%; padding: 1rem; border: 2px solid #e5e7eb; border-radius: 8px;"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem; margin-top: 2rem; font-size: 1.1rem;">
+                <i class="fas fa-paper-plane"></i> Submit Application
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    let selectedRate = 10.5;
+
+    function selectLoan(type, rate, element) {
+        document.getElementById('loan_type').value = type;
+        selectedRate = rate;
+        document.querySelectorAll('.loan-type-card').forEach(card => card.classList.remove('selected'));
+        element.classList.add('selected');
+        calculateEMI();
+    }
+
+    function updateAmount(val) {
+        document.getElementById('amountDisplay').textContent = parseInt(val).toLocaleString('en-IN');
+        document.getElementById('amount').value = val;
+        calculateEMI();
+    }
+
+    function updateTenure(val) {
+        document.getElementById('tenureDisplay').textContent = val;
+        document.getElementById('tenure').value = val;
+        calculateEMI();
+    }
+
+    function calculateEMI() {
+        const P = parseFloat(document.getElementById('amount').value);
+        const R = selectedRate / (12 * 100);
+        const N = parseInt(document.getElementById('tenure').value);
+
+        let emi = 0;
+        if (R === 0) {
+            emi = P / N;
+        } else {
+            emi = (P * R * Math.pow(1 + R, N)) / (Math.pow(1 + R, N) - 1);
+        }
+
+        const total = emi * N;
+        const interest = total - P;
+
+        document.getElementById('emiAmount').textContent = Math.round(emi).toLocaleString('en-IN');
+        document.getElementById('interestAmount').textContent = Math.round(interest).toLocaleString('en-IN');
+    }
+
+    // Initialize
+    calculateEMI();
+
+    // Form validation
+    document.getElementById('loanForm').addEventListener('submit', function(e) {
+        if (!document.getElementById('loan_type').value) {
+            e.preventDefault();
+            alert('Please select a loan type');
+            return false;
+        }
+    });
+</script>
+{% endblock %}

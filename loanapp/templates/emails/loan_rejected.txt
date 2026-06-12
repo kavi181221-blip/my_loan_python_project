@@ -1,0 +1,30 @@
+Loan Application Update
+
+Dear {{ user.first_name|default:user.username }},
+
+We regret to inform you that your loan application has been rejected after careful review.
+
+Application Details:
+- Loan Type: {{ loan.get_loan_type_display }}
+- Amount Requested: ₹{{ loan.amount }}
+- Tenure: {{ loan.tenure_months }} months
+- Purpose: {{ loan.purpose }}
+- Application Date: {{ loan.approved_date|date:"F j, Y, g:i A" }}
+- Status: {{ loan.status }}
+
+What You Can Do Next:
+- Apply Again: You can submit a new application after 30 days with improved documentation.
+- Improve Credit Score: Work on improving your credit score for better approval chances.
+- Contact Support: Reach out to our team for specific feedback on your application.
+- Alternative Options: Consider different loan types or amounts that may better suit your profile.
+
+We appreciate your interest in our Loan Management System and hope to serve you in the future.
+
+If you'd like to discuss your application or need guidance for reapplying, please contact our support team.
+
+Best regards,
+Loan Management Team
+
+---
+This is an automated message. Please do not reply to this email.
+© 2024 Loan Management System. All rights reserved.

@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Loan Management{% endblock %}
+
+{% block content %}
+<style>
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 2rem;
+    }
+
+    .sidebar {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        height: fit-content;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .sidebar-menu {
+        list-style: none;
+    }
+
+    .sidebar-menu li {
+        margin-bottom: 1rem;
+    }
+
+    .sidebar-menu a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0.75rem 1rem;
+        text-decoration: none;
+        color: var(--dark);
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+
+    .sidebar-menu a:hover, .sidebar-menu a.active {
+        background: var(--primary);
+        color: white;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border-left: 4px solid var(--primary);
+    }
+
+    .stat-card h4 {
+        color: #6b7280;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-card .value {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: var(--dark);
+    }
+
+    .quick-actions {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        padding: 1rem 2rem;
+        background: white;
+        border: 2px solid var(--primary);
+        color: var(--primary);
+        border-radius: 8px;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s;
+    }
+
+    .action-btn:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+    .loan-table {
+        width: 100%;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .loan-table table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .loan-table th {
+        background: var(--primary);
+        color: white;
+        padding: 1rem;
+        text-align: left;
+    }
+
+    .loan-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .loan-table tr:hover {
+        background: #f9fafb;
+    }
+
+    .status {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .status-pending { background: #fef3c7; color: #92400e; }
+    .status-approved { background: #d1fae5; color: #065f46; }
+    .status-rejected { background: #fee2e2; color: #991b1b; }
+
+    @media (max-width: 768px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+        .sidebar { display: none; }
+    }
+</style>
+
+<div class="container">
+    <div class="dashboard-grid">
+        <div class="sidebar">
+            <h3 style="margin-bottom: 1.5rem; color: var(--primary);">Menu</h3>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'dashboard' %}" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="{% url 'apply_loan' %}"><i class="fas fa-plus"></i> Apply Loan</a></li>
+                <li><a href="{% url 'loan_status' %}"><i class="fas fa-list"></i> My Loans</a></li>
+                <li><a href="{% url 'calculator' %}"><i class="fas fa-calculator"></i> Calculator</a></li>
+                <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <h2 style="margin-bottom: 1.5rem; color: white;">Welcome back, {{ request.user.first_name|default:request.user.username }}!</h2>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4>Total Loans</h4>
+                    <div class="value">{{ total_loans }}</div>
+                </div>
+                <div class="stat-card" style="border-left-color: var(--success);">
+                    <h4>Active Loans</h4>
+                    <div class="value" style="color: var(--success);">{{ active_loans }}</div>
+                </div>
+                <div class="stat-card" style="border-left-color: var(--warning);">
+                    <h4>Total Borrowed</h4>
+                    <div class="value" style="color: var(--warning);">₹{{ total_borrowed|default:"0" }}</div>
+                </div>
+                <div class="stat-card" style="border-left-color: var(--danger);">
+                    <h4>Pending Amount</h4>
+                    <div class="value" style="color: var(--danger);">₹{{ pending_amount|default:"0" }}</div>
+                </div>
+            </div>
+
+            <div class="quick-actions">
+                <a href="{% url 'apply_loan' %}" class="action-btn" style="background: var(--primary); color: white;">
+                    <i class="fas fa-plus"></i> New Application
+                </a>
+                <a href="{% url 'calculator' %}" class="action-btn">
+                    <i class="fas fa-calculator"></i> EMI Calculator
+                </a>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 1.5rem;">Recent Applications</h3>
+                <div class="loan-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Loan ID</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Applied Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for loan in loans %}
+                            <tr>
+                                <td>#{{ loan.id }}</td>
+                                <td>{{ loan.loan_type }}</td>
+                                <td>₹{{ loan.amount }}</td>
+                                <td>{{ loan.applied_date|date:"M d, Y" }}</td>
+                                <td><span class="status status-{{ loan.status|lower }}">{{ loan.status }}</span></td>
+                                <td>
+                                    <a href="{% url 'loan_details' loan.id %}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 2rem;">
+                                    No loan applications found. <a href="{% url 'apply_loan' %}">Apply now</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
