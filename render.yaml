@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: loanproject
+    env: python
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+    startCommand: gunicorn loanproject.wsgi:application
+    plan: free
+    autoDeploy: true
