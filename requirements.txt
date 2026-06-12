@@ -1,3 +1,4 @@
-flask
+Django
 gunicorn
+whitenoise
 requests
